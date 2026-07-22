@@ -1,20 +1,26 @@
-import { useState, useEffect } from 'react';
-import axios from 'axios';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext';
+import ProtectedRoute from './components/ProtectedRoute';
+import LandingPage from './pages/LandingPage';
+import Dashboard from './pages/Dashboard';
 
 function App() {
-  const [status, setStatus] = useState('Checking backend...');
-
-  useEffect(() => {
-    axios.get('http://localhost:5000/api/health')
-      .then((res) => setStatus(`Backend says: ${res.data.status}`))
-      .catch(() => setStatus('Could not reach backend'));
-  }, []);
-
   return (
-    <div style={{ padding: '2rem', fontFamily: 'sans-serif' }}>
-      <h1>CodeLens</h1>
-      <p>{status}</p>
-    </div>
+    <BrowserRouter>
+      <AuthProvider>
+        <Routes>
+          <Route path="/" element={<LandingPage />} />
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
+      </AuthProvider>
+    </BrowserRouter>
   );
 }
 

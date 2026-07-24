@@ -2,7 +2,9 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import LandingPage from './pages/LandingPage';
-import Dashboard from './pages/Dashboard';
+import Repos from './pages/Repos';
+import PullRequests from './pages/PullRequests';
+import PRReview from './pages/PRReview';
 
 function App() {
   return (
@@ -14,7 +16,23 @@ function App() {
             path="/dashboard"
             element={
               <ProtectedRoute>
-                <Dashboard />
+                <Repos />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/repos/:owner/:repo/pulls"
+            element={
+              <ProtectedRoute>
+                <PullRequests />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/repos/:owner/:repo/pulls/:number"
+            element={
+              <ProtectedRoute>
+                <PRReview />
               </ProtectedRoute>
             }
           />

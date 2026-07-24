@@ -5,6 +5,7 @@ const cookieParser = require('cookie-parser');
 const mongoose = require('mongoose');
 const passport = require('./config/passport');
 const authRoutes = require('./routes/auth.routes');
+const reposRoutes = require('./routes/repos.routes');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -15,6 +16,7 @@ app.use(cookieParser());
 app.use(passport.initialize());
 
 app.use('/api/auth', authRoutes);
+app.use('/api/repos', reposRoutes);
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok' });

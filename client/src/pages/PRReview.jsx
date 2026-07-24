@@ -8,6 +8,10 @@ export default function PRReview() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const [reviewLoading, setReviewLoading] = useState(false);
+  const [reviewError, setReviewError] = useState(null);
+  const [reviewResult, setReviewResult] = useState(null);
+
   useEffect(() => {
     setLoading(true);
     setError(null);
@@ -16,6 +20,21 @@ export default function PRReview() {
       .catch(() => setError('Could not load changed files. Please try again.'))
       .finally(() => setLoading(false));
   }, [owner, repo, number]);
+
+  const runReview = async () => {
+    setReviewLoading(true);
+    setReviewError(null);
+    setReviewResult(null);
+    try {
+      const res = await api.post('/review/pr', { owner, repo, prNumber: Number(number) });
+      setReviewResult(res.data);
+    } catch (err) {
+      const message = err.response?.data?.error || 'Review failed. Please try again.';
+      setReviewError(message);
+    } finally {
+      setReviewLoading(false);
+    }
+  };
 
   return (
     <div style={{ padding: '2rem', fontFamily: 'sans-serif', maxWidth: '700px', margin: '0 auto' }}>
@@ -46,12 +65,38 @@ export default function PRReview() {
           </ul>
 
           <button
-            disabled
-            title="Wired up on Day 5"
-            style={{ padding: '0.75rem 1.5rem', fontSize: '1rem', marginTop: '1rem', cursor: 'not-allowed', opacity: 0.6 }}
+            onClick={runReview}
+            disabled={reviewLoading}
+            style={{ padding: '0.75rem 1.5rem', fontSize: '1rem', marginTop: '1rem', cursor: reviewLoading ? 'wait' : 'pointer' }}
           >
-            Run AI Review
+            {reviewLoading ? 'Running AI Review...' : 'Run AI Review'}
           </button>
+
+          {reviewLoading && (
+            <p style={{ marginTop: '1rem', opacity: 0.7 }}>
+              Analyzing {files.length} file(s) with Gemini — this usually takes a few seconds...
+            </p>
+          )}
+
+          {reviewError && (
+            <p style={{ color: 'crimson', marginTop: '1rem' }}>{reviewError}</p>
+          )}
+
+          {reviewResult && (
+            <div style={{ marginTop: '1.5rem' }}>
+              <h2>Raw Review Result (temporary — Day 6 builds the real dashboard)</h2>
+              <pre style={{
+                background: '#111',
+                color: '#0f0',
+                padding: '1rem',
+                borderRadius: '8px',
+                overflowX: 'auto',
+                fontSize: '0.85rem'
+              }}>
+                {JSON.stringify(reviewResult, null, 2)}
+              </pre>
+            </div>
+          )}
         </>
       )}
     </div>

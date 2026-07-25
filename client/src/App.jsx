@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
+import Footer from './components/Footer';
 import LandingPage from './pages/LandingPage';
 import Repos from './pages/Repos';
 import PullRequests from './pages/PullRequests';
@@ -10,33 +11,38 @@ function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <Routes>
-          <Route path="/" element={<LandingPage />} />
-          <Route
-            path="/dashboard"
-            element={
-              <ProtectedRoute>
-                <Repos />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/repos/:owner/:repo/pulls"
-            element={
-              <ProtectedRoute>
-                <PullRequests />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/repos/:owner/:repo/pulls/:number"
-            element={
-              <ProtectedRoute>
-                <PRReview />
-              </ProtectedRoute>
-            }
-          />
-        </Routes>
+        <div className="app-shell">
+          <div className="app-content">
+            <Routes>
+              <Route path="/" element={<LandingPage />} />
+              <Route
+                path="/dashboard"
+                element={
+                  <ProtectedRoute>
+                    <Repos />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/repos/:owner/:repo/pulls"
+                element={
+                  <ProtectedRoute>
+                    <PullRequests />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/repos/:owner/:repo/pulls/:number"
+                element={
+                  <ProtectedRoute>
+                    <PRReview />
+                  </ProtectedRoute>
+                }
+              />
+            </Routes>
+          </div>
+          <Footer />
+        </div>
       </AuthProvider>
     </BrowserRouter>
   );

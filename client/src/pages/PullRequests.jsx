@@ -18,40 +18,26 @@ export default function PullRequests() {
   }, [owner, repo]);
 
   return (
-    <div style={{ padding: '2rem', fontFamily: 'sans-serif', maxWidth: '700px', margin: '0 auto' }}>
-      <Link to="/dashboard" style={{ color: 'inherit', opacity: 0.7 }}>&larr; Back to repositories</Link>
+    <div>
+      <Link to="/dashboard" className="back-link">&larr; Back to repositories</Link>
 
-      <h1 style={{ marginTop: '1rem' }}>{owner}/{repo}</h1>
-      <h2>Open Pull Requests</h2>
+      <div className="navbar">
+        <h1>{owner}/{repo}</h1>
+      </div>
+      <h2 className="section-title">Open Pull Requests</h2>
 
-      {loading && <p>Loading pull requests...</p>}
-      {error && <p style={{ color: 'crimson' }}>{error}</p>}
+      {loading && <p className="loading-state">Loading pull requests...</p>}
+      {error && <p style={{ color: 'var(--danger)' }}>{error}</p>}
       {!loading && !error && pulls.length === 0 && (
-        <p>No open pull requests in this repository.</p>
+        <p className="empty-state">No open pull requests in this repository.</p>
       )}
 
-      <div>
+      <div className="card-list">
         {pulls.map((pr) => (
-          <Link
-            key={pr.number}
-            to={`/repos/${owner}/${repo}/pulls/${pr.number}`}
-            style={{
-              display: 'block',
-              padding: '1rem',
-              marginBottom: '0.5rem',
-              border: '1px solid #333',
-              borderRadius: '8px',
-              textDecoration: 'none',
-              color: 'inherit'
-            }}
-          >
-            <strong>#{pr.number} — {pr.title}</strong>
-            <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', opacity: 0.7 }}>
-              opened by {pr.author}
-            </p>
-            <p style={{ margin: '0.25rem 0 0', fontSize: '0.8rem', opacity: 0.5 }}>
-              Updated {new Date(pr.updatedAt).toLocaleDateString()}
-            </p>
+          <Link key={pr.number} to={`/repos/${owner}/${repo}/pulls/${pr.number}`} className="card">
+            <div className="card-title">#{pr.number} — {pr.title}</div>
+            <p className="card-subtitle">opened by {pr.author}</p>
+            <p className="card-meta">Updated {new Date(pr.updatedAt).toLocaleDateString()}</p>
           </Link>
         ))}
       </div>

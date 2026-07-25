@@ -17,45 +17,29 @@ export default function Repos() {
   }, []);
 
   return (
-    <div style={{ padding: '2rem', fontFamily: 'sans-serif', maxWidth: '700px', margin: '0 auto' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+    <div>
+      <div className="navbar">
         <h1>CodeLens</h1>
-        <div>
-          <span style={{ marginRight: '1rem' }}>{user?.username}</span>
-          <button onClick={logout}>Log out</button>
+        <div className="navbar-right">
+          <span>{user?.username}</span>
+          <button className="btn btn-secondary" onClick={logout}>Log out</button>
         </div>
       </div>
 
-      <h2>Your Repositories</h2>
+      <h2 className="section-title">Your Repositories</h2>
 
-      {loading && <p>Loading repositories...</p>}
-      {error && <p style={{ color: 'crimson' }}>{error}</p>}
+      {loading && <p className="loading-state">Loading repositories...</p>}
+      {error && <p style={{ color: 'var(--danger)' }}>{error}</p>}
       {!loading && !error && repos.length === 0 && (
-        <p>No public repositories found on your GitHub account.</p>
+        <p className="empty-state">No public repositories found on your GitHub account.</p>
       )}
 
-      <div>
+      <div className="card-list">
         {repos.map((repo) => (
-          <Link
-            key={repo.id}
-            to={`/repos/${repo.owner}/${repo.name}/pulls`}
-            style={{
-              display: 'block',
-              padding: '1rem',
-              marginBottom: '0.5rem',
-              border: '1px solid #333',
-              borderRadius: '8px',
-              textDecoration: 'none',
-              color: 'inherit'
-            }}
-          >
-            <strong>{repo.fullName}</strong>
-            <p style={{ margin: '0.25rem 0 0', fontSize: '0.9rem', opacity: 0.7 }}>
-              {repo.description || 'No description'}
-            </p>
-            <p style={{ margin: '0.25rem 0 0', fontSize: '0.8rem', opacity: 0.5 }}>
-              Updated {new Date(repo.updatedAt).toLocaleDateString()}
-            </p>
+          <Link key={repo.id} to={`/repos/${repo.owner}/${repo.name}/pulls`} className="card">
+            <div className="card-title">{repo.fullName}</div>
+            <p className="card-subtitle">{repo.description || 'No description'}</p>
+            <p className="card-meta">Updated {new Date(repo.updatedAt).toLocaleDateString()}</p>
           </Link>
         ))}
       </div>

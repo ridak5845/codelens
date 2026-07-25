@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import api from '../services/api';
+import ScorePanel from '../components/ScorePanel';
+import FindingsList from '../components/FindingsList';
+import ErrorBanner from '../components/ErrorBanner';
 
 export default function PRReview() {
   const { owner, repo, number } = useParams();
@@ -29,7 +32,7 @@ export default function PRReview() {
       const res = await api.post('/review/pr', { owner, repo, prNumber: Number(number) });
       setReviewResult(res.data);
     } catch (err) {
-      const message = err.response?.data?.error || 'Review failed. Please try again.';
+      const message = err.response?.data?.error || 'Review failed — the AI service may be busy, try again in a moment.';
       setReviewError(message);
     } finally {
       setReviewLoading(false);
@@ -37,65 +40,43 @@ export default function PRReview() {
   };
 
   return (
-    <div style={{ padding: '2rem', fontFamily: 'sans-serif', maxWidth: '700px', margin: '0 auto' }}>
-      <Link to={`/repos/${owner}/${repo}/pulls`} style={{ color: 'inherit', opacity: 0.7 }}>
-        &larr; Back to pull requests
-      </Link>
+    <div>
+      <Link to={`/repos/${owner}/${repo}/pulls`} className="back-link">&larr; Back to pull requests</Link>
 
-      <h1 style={{ marginTop: '1rem' }}>{owner}/{repo} — PR #{number}</h1>
+      <div className="navbar">
+        <h1>{owner}/{repo} — PR #{number}</h1>
+      </div>
 
-      {loading && <p>Loading changed files...</p>}
-      {error && <p style={{ color: 'crimson' }}>{error}</p>}
+      {loading && <p className="loading-state">Loading changed files...</p>}
+      {error && <ErrorBanner message={error} />}
       {!loading && !error && files.length === 0 && (
-        <p>No changed files found for this pull request.</p>
+        <p className="empty-state">No changed files found for this pull request.</p>
       )}
 
       {!loading && !error && files.length > 0 && (
         <>
-          <h2>Changed Files ({files.length})</h2>
-          <ul>
+          <h2 className="section-title">Changed Files ({files.length})</h2>
+          <div className="card-list">
             {files.map((file) => (
-              <li key={file.filename} style={{ marginBottom: '0.5rem' }}>
-                <code>{file.filename}</code>
-                <span style={{ marginLeft: '0.75rem', fontSize: '0.85rem', opacity: 0.6 }}>
-                  +{file.additions} / -{file.deletions} ({file.status})
-                </span>
-              </li>
+              <div key={file.filename} className="card" style={{ cursor: 'default' }}>
+                <code style={{ fontSize: '0.85rem' }}>{file.filename}</code>
+                <p className="card-meta">+{file.additions} / -{file.deletions} ({file.status})</p>
+              </div>
             ))}
-          </ul>
+          </div>
 
-          <button
-            onClick={runReview}
-            disabled={reviewLoading}
-            style={{ padding: '0.75rem 1.5rem', fontSize: '1rem', marginTop: '1rem', cursor: reviewLoading ? 'wait' : 'pointer' }}
-          >
+          <button className="btn" onClick={runReview} disabled={reviewLoading} style={{ marginTop: '1.25rem' }}>
+            {reviewLoading && <span className="spinner" />}
             {reviewLoading ? 'Running AI Review...' : 'Run AI Review'}
           </button>
 
-          {reviewLoading && (
-            <p style={{ marginTop: '1rem', opacity: 0.7 }}>
-              Analyzing {files.length} file(s) with Gemini — this usually takes a few seconds...
-            </p>
-          )}
-
-          {reviewError && (
-            <p style={{ color: 'crimson', marginTop: '1rem' }}>{reviewError}</p>
-          )}
+          {reviewError && <ErrorBanner message={reviewError} />}
 
           {reviewResult && (
-            <div style={{ marginTop: '1.5rem' }}>
-              <h2>Raw Review Result (temporary — Day 6 builds the real dashboard)</h2>
-              <pre style={{
-                background: '#111',
-                color: '#0f0',
-                padding: '1rem',
-                borderRadius: '8px',
-                overflowX: 'auto',
-                fontSize: '0.85rem'
-              }}>
-                {JSON.stringify(reviewResult, null, 2)}
-              </pre>
-            </div>
+            <>
+              <ScorePanel scores={reviewResult.scores} />
+              <FindingsList findings={reviewResult.findings} files={files} />
+            </>
           )}
         </>
       )}

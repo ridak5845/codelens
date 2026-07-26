@@ -11,7 +11,9 @@ const reviewRoutes = require('./routes/review.routes');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
+const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:5173';
+
+app.use(cors({ origin: CLIENT_URL, credentials: true }));
 app.use(express.json());
 app.use(cookieParser());
 app.use(passport.initialize());

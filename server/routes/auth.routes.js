@@ -4,6 +4,9 @@ const generateToken = require('../utils/generateToken');
 const requireAuth = require('../middleware/requireAuth');
 const router = express.Router();
 
+const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:5173';
+const IS_PRODUCTION = process.env.NODE_ENV === 'production';
+
 router.get('/github', passport.authenticate('github', { session: false }));
 
 router.get('/github/callback',
@@ -12,11 +15,11 @@ router.get('/github/callback',
     const token = generateToken(req.user);
     res.cookie('token', token, {
       httpOnly: true,
-      sameSite: 'lax',       // 'none' + secure:true in production (Day 10)
-      secure: false,         // true in production
+      sameSite: IS_PRODUCTION ? 'none' : 'lax',
+      secure: IS_PRODUCTION,
       maxAge: 7 * 24 * 60 * 60 * 1000
     });
-    res.redirect('http://localhost:5173/dashboard');
+    res.redirect(`${CLIENT_URL}/dashboard`);
   }
 );
 

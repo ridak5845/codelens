@@ -1,13 +1,25 @@
-import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Cell } from 'recharts';
-
 function scoreColor(score) {
-  if (score >= 80) return '#22c55e';
-  if (score >= 50) return '#eab308';
-  return '#ef4444';
+  if (score >= 80) return 'var(--success)';
+  if (score >= 50) return 'var(--warning)';
+  return 'var(--danger)';
+}
+
+function scoreLabel(score) {
+  if (score >= 80) return 'Good';
+  if (score >= 50) return 'Fair';
+  return 'Weak';
+}
+
+function scoreTagStyle(score) {
+  const color = scoreColor(score);
+  return {
+    color,
+    backgroundColor: score >= 80 ? 'rgba(34,197,94,0.15)' : score >= 50 ? 'rgba(234,179,8,0.15)' : 'rgba(239,68,68,0.15)'
+  };
 }
 
 export default function ScorePanel({ scores }) {
-  const data = [
+  const rows = [
     { name: 'Security', value: scores?.security ?? 0 },
     { name: 'Performance', value: scores?.performance ?? 0 },
     { name: 'Maintainability', value: scores?.maintainability ?? 0 }
@@ -15,27 +27,22 @@ export default function ScorePanel({ scores }) {
 
   return (
     <div className="score-panel">
-      <h2 className="section-title">Scores</h2>
-      <div style={{ width: '100%', height: 160 }}>
-        <ResponsiveContainer>
-          <BarChart data={data} layout="vertical" margin={{ left: 20, right: 20 }}>
-            <XAxis type="number" domain={[0, 100]} hide />
-            <YAxis type="category" dataKey="name" width={110} tick={{ fill: 'var(--text-secondary)', fontSize: 13 }} />
-            <Bar dataKey="value" radius={[0, 6, 6, 0]} barSize={22}>
-              {data.map((entry, index) => (
-                <Cell key={index} fill={scoreColor(entry.value)} />
-              ))}
-            </Bar>
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
-      <div className="score-numbers">
-        {data.map((entry) => (
-          <span key={entry.name} className="score-number">
-            {entry.name}: <strong style={{ color: scoreColor(entry.value) }}>{entry.value}</strong>
-          </span>
-        ))}
-      </div>
+      <h2 className="section-title" style={{ marginTop: 0 }}>Scores</h2>
+      {rows.map((row) => (
+        <div className="score-row" key={row.name}>
+          <span className="score-label">{row.name}</span>
+          <div className="score-bar-track">
+            <div
+              className="score-bar-fill"
+              style={{ width: `${row.value}%`, backgroundColor: scoreColor(row.value) }}
+            />
+          </div>
+          <div className="score-value-group">
+            <span className="score-number" style={{ color: scoreColor(row.value) }}>{row.value}</span>
+            <span className="score-tag" style={scoreTagStyle(row.value)}>{scoreLabel(row.value)}</span>
+          </div>
+        </div>
+      ))}
     </div>
   );
 }

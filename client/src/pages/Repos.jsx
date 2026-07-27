@@ -1,10 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../services/api';
-import { useAuth } from '../context/AuthContext';
 
 export default function Repos() {
-  const { user, logout } = useAuth();
   const [repos, setRepos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -18,15 +16,7 @@ export default function Repos() {
 
   return (
     <div>
-      <div className="navbar">
-        <h1>CodeLens</h1>
-        <div className="navbar-right">
-          <span>{user?.username}</span>
-          <button className="btn btn-secondary" onClick={logout}>Log out</button>
-        </div>
-      </div>
-
-      <h2 className="section-title">Your Repositories</h2>
+      <h1 className="page-title">Your Repositories</h1>
 
       {loading && <p className="loading-state">Loading repositories...</p>}
       {error && <p style={{ color: 'var(--danger)' }}>{error}</p>}

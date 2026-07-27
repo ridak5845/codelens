@@ -9,11 +9,12 @@ const CATEGORY_COLORS = {
 
 export default function FindingCard({ finding, patch }) {
   const excerpt = finding.line ? getCodeExcerpt(patch, finding.line, 1) : null;
+  const accentColor = CATEGORY_COLORS[finding.category] || '#666';
 
   return (
-    <div className="finding-card">
+    <div className="finding-card" style={{ borderLeftColor: accentColor }}>
       <div className="finding-header">
-        <span className="category-tag" style={{ backgroundColor: CATEGORY_COLORS[finding.category] || '#666' }}>
+        <span className="category-tag" style={{ backgroundColor: accentColor }}>
           {finding.category}
         </span>
         <code className="finding-file">{finding.file}</code>

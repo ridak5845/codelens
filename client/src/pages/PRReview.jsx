@@ -43,9 +43,7 @@ export default function PRReview() {
     <div>
       <Link to={`/repos/${owner}/${repo}/pulls`} className="back-link">&larr; Back to pull requests</Link>
 
-      <div className="navbar">
-        <h1>{owner}/{repo} — PR #{number}</h1>
-      </div>
+      <h1 className="page-title">{owner}/{repo} — PR #{number}</h1>
 
       {loading && <p className="loading-state">Loading changed files...</p>}
       {error && <ErrorBanner message={error} />}

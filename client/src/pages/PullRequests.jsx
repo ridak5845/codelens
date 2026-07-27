@@ -21,10 +21,8 @@ export default function PullRequests() {
     <div>
       <Link to="/dashboard" className="back-link">&larr; Back to repositories</Link>
 
-      <div className="navbar">
-        <h1>{owner}/{repo}</h1>
-      </div>
-      <h2 className="section-title">Open Pull Requests</h2>
+      <h1 className="page-title">{owner}/{repo}</h1>
+      <h2 className="section-title" style={{ marginTop: 0 }}>Open Pull Requests</h2>
 
       {loading && <p className="loading-state">Loading pull requests...</p>}
       {error && <p style={{ color: 'var(--danger)' }}>{error}</p>}

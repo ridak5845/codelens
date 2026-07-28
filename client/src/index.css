@@ -6,7 +6,7 @@
   --border-hover: #3a3a44;
   --text-primary: #f2f2f5;
   --text-secondary: #9a9aa5;
-  --text-tertiary: #6b6b76;
+  --text-tertiary: #86868f;
   --accent: #6366f1;
   --accent-hover: #4f46e5;
   --accent-soft: rgba(99, 102, 241, 0.12);
@@ -631,4 +631,68 @@ body {
   .history-card { align-items: flex-start; }
   .score-label { width: 85px; font-size: 0.78rem; }
   .score-value-group { width: 70px; }
+}
+
+/* ---------- Error / 404 pages ---------- */
+
+.error-page {
+  text-align: center;
+  padding: 4rem 1.5rem;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.error-page h1 {
+  font-size: 2rem;
+  margin-bottom: 0.75rem;
+}
+
+.error-page p {
+  color: var(--text-secondary);
+  margin-bottom: 1.5rem;
+  line-height: 1.5;
+}
+
+/* ---------- Offline banner ---------- */
+
+.offline-banner {
+  background: rgba(234, 179, 8, 0.12);
+  border-bottom: 1px solid var(--warning);
+  color: #fde68a;
+  text-align: center;
+  padding: 0.6rem 1rem;
+  font-size: 0.85rem;
+}
+
+/* ---------- Skip link (accessibility) ---------- */
+
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: var(--accent);
+  color: white;
+  padding: 0.6rem 1.1rem;
+  border-radius: 0 0 var(--radius) 0;
+  z-index: 100;
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: top 0.15s ease;
+}
+
+.skip-link:focus {
+  top: 0;
+}
+
+/* ---------- Char count (File Review) ---------- */
+
+.char-count {
+  font-size: 0.78rem;
+  color: var(--text-tertiary);
+}
+
+.char-count-over {
+  color: var(--danger);
+  font-weight: 600;
 }

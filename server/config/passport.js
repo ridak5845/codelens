@@ -6,6 +6,10 @@ passport.use(new GitHubStrategy({
     clientID: process.env.GITHUB_CLIENT_ID,
     clientSecret: process.env.GITHUB_CLIENT_SECRET,
     callbackURL: process.env.GITHUB_CALLBACK_URL
+    // Note: 'state: true' was tried here for CSRF protection, but passport-oauth2's
+    // default state store requires req.session, which this app intentionally doesn't use
+    // (stateless JWT architecture — see Day 3). The OAuth client_secret handshake already
+    // provides the primary protection here.
   },
   async (accessToken, refreshToken, profile, done) => {
     try {
@@ -19,7 +23,7 @@ passport.use(new GitHubStrategy({
           githubAccessToken: accessToken
         });
       } else {
-        user.githubAccessToken = accessToken; // keep token fresh on re-login
+        user.githubAccessToken = accessToken;
         await user.save();
       }
       return done(null, user);

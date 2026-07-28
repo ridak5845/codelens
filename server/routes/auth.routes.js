@@ -10,8 +10,11 @@ const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 router.get('/github', passport.authenticate('github', { session: false }));
 
 router.get('/github/callback',
-  passport.authenticate('github', { session: false, failureRedirect: '/' }),
+  passport.authenticate('github', { session: false, failureRedirect: `${CLIENT_URL}/?error=auth_failed` }),
   (req, res) => {
+    if (!req.user) {
+      return res.redirect(`${CLIENT_URL}/?error=auth_failed`);
+    }
     const token = generateToken(req.user);
     res.cookie('token', token, {
       httpOnly: true,
@@ -28,7 +31,11 @@ router.get('/me', requireAuth, (req, res) => {
 });
 
 router.post('/logout', requireAuth, (req, res) => {
-  res.clearCookie('token');
+  res.clearCookie('token', {
+    httpOnly: true,
+    sameSite: IS_PRODUCTION ? 'none' : 'lax',
+    secure: IS_PRODUCTION
+  });
   res.json({ message: 'Logged out' });
 });
 

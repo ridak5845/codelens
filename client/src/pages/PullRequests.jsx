@@ -1,21 +1,13 @@
-import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import api from '../services/api';
+import { useApiData } from '../hooks/useApiData';
 
 export default function PullRequests() {
   const { owner, repo } = useParams();
-  const [pulls, setPulls] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    setLoading(true);
-    setError(null);
-    api.get(`/repos/${owner}/${repo}/pulls`)
-      .then((res) => setPulls(res.data))
-      .catch(() => setError('Could not load pull requests. Please try again.'))
-      .finally(() => setLoading(false));
-  }, [owner, repo]);
+  const { data: pulls, loading, error } = useApiData(
+    `/repos/${owner}/${repo}/pulls`,
+    [owner, repo],
+    'Could not load pull requests. Please try again.'
+  );
 
   return (
     <div>
@@ -26,12 +18,12 @@ export default function PullRequests() {
 
       {loading && <p className="loading-state">Loading pull requests...</p>}
       {error && <p style={{ color: 'var(--danger)' }}>{error}</p>}
-      {!loading && !error && pulls.length === 0 && (
+      {!loading && !error && pulls?.length === 0 && (
         <p className="empty-state">No open pull requests in this repository.</p>
       )}
 
       <div className="card-list">
-        {pulls.map((pr) => (
+        {pulls?.map((pr) => (
           <Link key={pr.number} to={`/repos/${owner}/${repo}/pulls/${pr.number}`} className="card">
             <div className="card-title">#{pr.number} — {pr.title}</div>
             <p className="card-subtitle">opened by {pr.author}</p>

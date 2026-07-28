@@ -1,29 +1,16 @@
-import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import api from '../services/api';
+import { useApiData } from '../hooks/useApiData';
 import ScorePanel from '../components/ScorePanel';
 import FindingsList from '../components/FindingsList';
 import ErrorBanner from '../components/ErrorBanner';
 
 export default function HistoryDetail() {
   const { id } = useParams();
-  const [review, setReview] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    setLoading(true);
-    setError(null);
-    api.get(`/review/history/${id}`)
-      .then((res) => setReview(res.data))
-      .catch((err) => {
-        const message = err.response?.status === 404
-          ? 'This review could not be found.'
-          : 'Could not load this review. Please try again.';
-        setError(message);
-      })
-      .finally(() => setLoading(false));
-  }, [id]);
+  const { data: review, loading, error } = useApiData(
+    `/review/history/${id}`,
+    [id],
+    'Could not load this review. Please try again.'
+  );
 
   return (
     <div>

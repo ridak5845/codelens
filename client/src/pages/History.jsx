@@ -1,6 +1,5 @@
-import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import api from '../services/api';
+import { useApiData } from '../hooks/useApiData';
 
 function scoreColor(score) {
   if (score >= 80) return '#22c55e';
@@ -13,16 +12,7 @@ function averageScore(scores) {
 }
 
 export default function History() {
-  const [reviews, setReviews] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    api.get('/review/history')
-      .then((res) => setReviews(res.data))
-      .catch(() => setError('Could not load review history. Please try again.'))
-      .finally(() => setLoading(false));
-  }, []);
+  const { data: reviews, loading, error } = useApiData('/review/history', [], 'Could not load review history. Please try again.');
 
   return (
     <div>
@@ -30,14 +20,14 @@ export default function History() {
 
       {loading && <p className="loading-state">Loading history...</p>}
       {error && <p style={{ color: 'var(--danger)' }}>{error}</p>}
-      {!loading && !error && reviews.length === 0 && (
+      {!loading && !error && reviews?.length === 0 && (
         <p className="empty-state">
           No reviews yet. Run a review from a pull request or the File Review page to see it here.
         </p>
       )}
 
       <div className="card-list">
-        {reviews.map((review) => {
+        {reviews?.map((review) => {
           const avg = averageScore(review.scores);
           const title = review.source === 'pr'
             ? `${review.repoOwner}/${review.repoName} — PR #${review.prNumber}`

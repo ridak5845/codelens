@@ -4,6 +4,8 @@ import ScorePanel from '../components/ScorePanel';
 import FindingsList from '../components/FindingsList';
 import ErrorBanner from '../components/ErrorBanner';
 
+const MAX_CODE_LENGTH = 50000;
+
 export default function FileReview() {
   const [mode, setMode] = useState('paste');
   const [filename, setFilename] = useState('');
@@ -17,10 +19,19 @@ export default function FileReview() {
     const file = e.target.files[0];
     if (!file) return;
 
+    if (file.size > MAX_CODE_LENGTH) {
+      setReviewError(`That file is too large (max ${(MAX_CODE_LENGTH / 1000).toFixed(0)}KB). Please choose a smaller file.`);
+      return;
+    }
+
     const reader = new FileReader();
     reader.onload = (event) => {
       setCode(event.target.result);
       setFilename(file.name);
+      setReviewError(null);
+    };
+    reader.onerror = () => {
+      setReviewError('Could not read that file. Please try a different one.');
     };
     reader.readAsText(file);
   };
@@ -28,6 +39,10 @@ export default function FileReview() {
   const runReview = async () => {
     if (!filename.trim() || !code.trim()) {
       setReviewError('Please provide both a filename and some code to review.');
+      return;
+    }
+    if (code.length > MAX_CODE_LENGTH) {
+      setReviewError(`Code is too large (max ${MAX_CODE_LENGTH.toLocaleString()} characters, currently ${code.length.toLocaleString()}). Please trim it down.`);
       return;
     }
 
@@ -44,6 +59,9 @@ export default function FileReview() {
       setReviewLoading(false);
     }
   };
+
+  const charCount = code.length;
+  const isOverLimit = charCount > MAX_CODE_LENGTH;
 
   return (
     <div>
@@ -82,7 +100,12 @@ export default function FileReview() {
 
         {mode === 'paste' ? (
           <>
-            <label className="form-label" htmlFor="code-input">Code</label>
+            <div className="form-row-between">
+              <label className="form-label" htmlFor="code-input">Code</label>
+              <span className={`char-count ${isOverLimit ? 'char-count-over' : ''}`}>
+                {charCount.toLocaleString()} / {MAX_CODE_LENGTH.toLocaleString()} characters
+              </span>
+            </div>
             <textarea
               id="code-input"
               className="code-textarea"
@@ -95,8 +118,14 @@ export default function FileReview() {
         ) : (
           <>
             <label className="form-label">File</label>
-            <div className="upload-dropzone" onClick={() => fileInputRef.current.click()}>
-              📄 Click to choose a file
+            <div
+              className="upload-dropzone"
+              onClick={() => fileInputRef.current.click()}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') fileInputRef.current.click(); }}
+            >
+              <span aria-hidden="true">📄</span> Click to choose a file
               {filename && <div className="upload-filename">{filename}</div>}
             </div>
             <input
@@ -109,8 +138,8 @@ export default function FileReview() {
           </>
         )}
 
-        <button className="btn" onClick={runReview} disabled={reviewLoading} style={{ marginTop: '0.75rem', alignSelf: 'flex-start' }}>
-          {reviewLoading && <span className="spinner" />}
+        <button className="btn" onClick={runReview} disabled={reviewLoading || isOverLimit} style={{ marginTop: '0.75rem', alignSelf: 'flex-start' }}>
+          {reviewLoading && <span className="spinner" aria-hidden="true" />}
           {reviewLoading ? 'Running AI Review...' : 'Run AI Review'}
         </button>
       </div>

@@ -254,8 +254,6 @@ router.post('/:reviewId/publish', requireAuth, async (req, res, next) => {
     res.json({ posted: comments.length, skipped: review.findings.length - commentable.length });
   } catch (err) {
     console.error('POST /api/review/:reviewId/publish failed:', err.message);
-    console.error('GitHub API response body:', JSON.stringify(err.response?.data, null, 2));
-    console.error('GitHub API response status:', err.response?.status);
     if (err.response?.status === 422) {
       return res.status(422).json({ error: 'GitHub rejected the comments — the PR may have new commits since this review ran. Try running a fresh review.' });
     }

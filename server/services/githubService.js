@@ -58,4 +58,24 @@ async function getPullRequestFiles(accessToken, owner, repo, prNumber) {
   }));
 }
 
-module.exports = { getUserRepos, getRepoPullRequests, getPullRequestFiles };
+async function getPullRequest(accessToken, owner, repo, prNumber) {
+  const client = githubClient(accessToken);
+  const response = await client.get(`/repos/${owner}/${repo}/pulls/${prNumber}`);
+  return {
+    headSha: response.data.head.sha,
+    title: response.data.title,
+    state: response.data.state
+  };
+}
+
+async function postReviewComments(accessToken, owner, repo, prNumber, commitId, comments) {
+  const client = githubClient(accessToken);
+  const response = await client.post(`/repos/${owner}/${repo}/pulls/${prNumber}/reviews`, {
+    commit_id: commitId,
+    event: 'COMMENT',
+    comments
+  });
+  return response.data;
+}
+
+module.exports = { getUserRepos, getRepoPullRequests, getPullRequestFiles, getPullRequest, postReviewComments };

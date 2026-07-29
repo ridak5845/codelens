@@ -4,6 +4,8 @@ import api from '../services/api';
 import ScorePanel from '../components/ScorePanel';
 import FindingsList from '../components/FindingsList';
 import ErrorBanner from '../components/ErrorBanner';
+import PublishButton from '../components/PublishButton';
+import ComparisonSummary from '../components/ComparisonSummary';
 
 export default function PRReview() {
   const { owner, repo, number } = useParams();
@@ -72,8 +74,12 @@ export default function PRReview() {
 
           {reviewResult && (
             <>
+              {reviewResult.comparison && <ComparisonSummary comparison={reviewResult.comparison} />}
               <ScorePanel scores={reviewResult.scores} />
               <FindingsList findings={reviewResult.findings} files={files} />
+              <div style={{ marginTop: '1rem' }}>
+                <PublishButton reviewId={reviewResult.reviewId} alreadyPublished={false} />
+              </div>
             </>
           )}
         </>

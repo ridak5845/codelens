@@ -696,3 +696,84 @@ body {
   color: var(--danger);
   font-weight: 600;
 }
+
+/* ---------- Publish to GitHub ---------- */
+
+.publish-confirm {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem;
+  margin-top: 0.5rem;
+}
+
+.publish-confirm p {
+  margin: 0 0 0.75rem;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.publish-confirm-actions {
+  display: flex;
+  gap: 0.6rem;
+}
+
+.publish-success {
+  color: var(--success);
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-top: 0.5rem;
+}
+
+/* ---------- Comparison Summary ---------- */
+
+.comparison-summary {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+  margin-top: 1rem;
+}
+
+.comparison-counts {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.85rem;
+}
+
+.comparison-count {
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.comparison-resolved { color: var(--success); }
+.comparison-new { color: var(--danger); }
+.comparison-unchanged { color: var(--text-secondary); }
+
+.comparison-deltas {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.delta-badge {
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.3rem 0.65rem;
+  border-radius: var(--radius-sm);
+}
+
+.delta-positive { background: rgba(34,197,94,0.15); color: var(--success); }
+.delta-negative { background: rgba(239,68,68,0.15); color: var(--danger); }
+.delta-neutral { background: var(--bg); color: var(--text-secondary); }
+
+/* ---------- Analytics ---------- */
+
+.analytics-panel {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+  margin-top: 1.25rem;
+}

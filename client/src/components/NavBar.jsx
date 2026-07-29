@@ -23,6 +23,9 @@ export default function NavBar() {
           <Link to="/file-review" className={isActive('/file-review') ? 'nav-link active' : 'nav-link'}>
             File Review
           </Link>
+          <Link to="/analytics" className={isActive('/analytics') ? 'nav-link active' : 'nav-link'}>
+            Analytics
+          </Link>
         </nav>
       </div>
       <div className="navbar-right">
